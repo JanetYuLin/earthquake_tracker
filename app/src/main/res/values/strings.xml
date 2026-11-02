@@ -1,0 +1,141 @@
+<resources>
+    <string name="app_name">Grounded</string>
+
+    <!-- Navigation -->
+    <string name="nav_map">Map</string>
+    <string name="nav_list">List</string>
+    <string name="nav_alerts">Alerts</string>
+
+    <!-- Common -->
+    <string name="action_retry">Retry</string>
+    <string name="action_back">Back</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_allow">Allow</string>
+    <string name="action_open_settings">Settings</string>
+
+    <!-- Earthquakes (shared) -->
+    <string name="earthquake_magnitude">M %1$.1f</string>
+    <string name="magnitude_description">Magnitude %1$.1f, %2$s</string>
+    <string name="earthquake_time_distance">%1$s · %2$d km away</string>
+    <string name="earthquake_depth">%1$.1f km deep</string>
+    <string name="severity_minor">minor</string>
+    <string name="severity_light">light</string>
+    <string name="severity_moderate">moderate</string>
+    <string name="severity_strong">strong</string>
+    <string name="severity_major">major</string>
+    <string name="pager_green">PAGER: green</string>
+    <string name="pager_yellow">PAGER: yellow</string>
+    <string name="pager_orange">PAGER: orange</string>
+    <string name="pager_red">PAGER: red</string>
+    <string name="tsunami_chip">Tsunami info</string>
+    <string name="time_just_now">Just now</string>
+    <plurals name="time_minutes_ago">
+        <item quantity="one">%d min ago</item>
+        <item quantity="other">%d min ago</item>
+    </plurals>
+    <plurals name="time_hours_ago">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="time_days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <string name="period_hour">Past hour</string>
+    <string name="period_day">Past day</string>
+    <string name="period_week">Past week</string>
+    <string name="period_month">Past month</string>
+
+    <!-- Feed status and errors -->
+    <string name="feed_updated">Updated %1$s</string>
+    <string name="feed_stale">Couldn\'t refresh. %1$s %2$s.</string>
+    <string name="feed_error_title">Couldn\'t load earthquakes</string>
+    <string name="error_network">No connection to USGS.</string>
+    <string name="error_server">USGS isn\'t responding right now.</string>
+    <string name="error_unknown">Something went wrong.</string>
+
+    <!-- Location -->
+    <string name="location_permission_message">Allow location access to see how far away each earthquake is.</string>
+    <string name="location_unavailable_message">Location is off or unavailable, so distances are hidden.</string>
+
+    <!-- Map -->
+    <plurals name="map_count">
+        <item quantity="one">%1$d earthquake M2.5+ worldwide</item>
+        <item quantity="other">%1$d earthquakes M2.5+ worldwide</item>
+    </plurals>
+    <string name="map_legend_title">Magnitude</string>
+    <string name="map_legend_item">%1$s %2$s</string>
+    <string name="map_range_minor">&lt; 3</string>
+    <string name="map_range_light">3–4</string>
+    <string name="map_range_moderate">4–5</string>
+    <string name="map_range_strong">5–6</string>
+    <string name="map_range_major">6+</string>
+    <string name="map_details">View details</string>
+    <string name="map_loading">Loading map</string>
+    <plurals name="map_description">
+        <item quantity="one">Map showing %1$d earthquake. The List tab shows the same earthquakes.</item>
+        <item quantity="other">Map showing %1$d earthquakes. The List tab shows the same earthquakes.</item>
+    </plurals>
+
+    <!-- List -->
+    <string name="list_empty">No M2.5+ earthquakes in this period.</string>
+    <string name="sort_recent">Recent</string>
+    <string name="sort_nearest">Nearest</string>
+    <string name="sort_strongest">Strongest</string>
+
+    <!-- Detail -->
+    <string name="detail_title">Earthquake details</string>
+    <string name="detail_time">Time</string>
+    <string name="detail_distance">From you</string>
+    <string name="detail_distance_value">%1$d km</string>
+    <string name="detail_depth">Depth</string>
+    <string name="detail_depth_value">%1$.1f km</string>
+    <string name="detail_coordinates">Location</string>
+    <string name="detail_coordinates_value">%1$.3f, %2$.3f</string>
+    <string name="detail_status">Status</string>
+    <string name="detail_status_reviewed">Reviewed by a seismologist</string>
+    <string name="detail_status_automatic">Automatic (not yet reviewed)</string>
+    <string name="detail_felt">Felt reports</string>
+    <string name="detail_pager">Impact estimate</string>
+    <string name="detail_open_usgs">Open on USGS</string>
+
+    <!-- Safety (in details) -->
+    <string name="safety_title">If you felt it</string>
+    <string name="safety_bullet">•  %1$s</string>
+    <string name="safety_during_title">During: Drop, Cover, and Hold On</string>
+    <string-array name="safety_during_steps">
+        <item>Drop to your hands and knees before the shaking knocks you down.</item>
+        <item>Cover your head and neck. Get under a sturdy table or desk if one is close; otherwise get next to an interior wall away from windows.</item>
+        <item>Hold on until the shaking stops, ready to move with your shelter.</item>
+        <item>Don\'t run outside or stand in a doorway. If you use a wheelchair or walker, lock it and cover your head and neck.</item>
+        <item>In a car, pull over away from bridges, overpasses and power lines, set the brake and stay inside.</item>
+        <item>Near the coast, if shaking is strong or lasts a long time, move to high ground as soon as it stops.</item>
+    </string-array>
+    <string name="safety_after_title">After: stay safe</string>
+    <string-array name="safety_after_steps">
+        <item>Expect aftershocks. Drop, Cover, and Hold On each time.</item>
+        <item>Check yourself and others for injuries. Call 911 only for life-threatening emergencies.</item>
+        <item>If you smell gas, leave immediately and report it from a safe place. Don\'t use flames or switches.</item>
+        <item>Stay out of damaged buildings and away from downed power lines.</item>
+        <item>Text rather than call to keep lines free for emergencies, and follow official updates.</item>
+    </string-array>
+    <string name="safety_link_ready_gov">More from Ready.gov</string>
+    <string name="safety_link_tsunami">Tsunami warnings (Tsunami.gov)</string>
+
+    <!-- Alerts -->
+    <string name="alerts_title">Nearby earthquake alerts</string>
+    <string name="alerts_toggle">Notify me about earthquakes near me</string>
+    <string name="alerts_permission_denied">Notifications are blocked. Allow them in system Settings to receive alerts.</string>
+    <string name="alerts_min_magnitude">Minimum magnitude</string>
+    <string name="alerts_magnitude_option">M%1$.1f+</string>
+    <string name="alerts_radius">Within %1$d km</string>
+    <string name="alerts_disclaimer">While Grounded is open, alerts are checked every few minutes from your current location. In the background they are checked about every 15 minutes, or less often when Android saves battery, from where you last opened the app. Alerts are informational and are not an earthquake early warning.</string>
+    <string name="about_title">About</string>
+    <string name="attribution_usgs">Earthquake data: U.S. Geological Survey</string>
+    <string name="attribution_map">Map © OpenMapTiles, data © OpenStreetMap contributors</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_nearby">Nearby earthquakes</string>
+    <string name="notification_channel_nearby_description">Recent earthquakes near you or near where you last opened Grounded</string>
+    <string name="notification_title">M%1$.1f earthquake %2$d km away</string>
+</resources>

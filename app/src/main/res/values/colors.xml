@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window colors shown before Compose draws; keep in sync with background roles in ui/theme/Color.kt. -->
+    <color name="window_background">#FFFAFAE9</color>
+</resources>

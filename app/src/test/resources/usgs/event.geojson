@@ -1,0 +1,10 @@
+{
+  "type": "Feature",
+  "id": "ci1",
+  "properties": {
+    "mag": 4.5, "place": "10 km N of Ridgecrest, CA", "time": 1700000000000,
+    "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci1", "tsunami": 0, "status": "reviewed",
+    "products": { "origin": [] }
+  },
+  "geometry": { "type": "Point", "coordinates": [-117.6, 35.7, 8.2] }
+}

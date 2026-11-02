@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "metadata": { "generated": 1, "url": "u", "title": "t", "count": 2, "status": 200 },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "ci1",
+      "properties": {
+        "mag": 4.5, "place": "10 km N of Ridgecrest, CA", "time": 1700000000000, "updated": 1700000100000,
+        "title": "M 4.5 - 10 km N of Ridgecrest, CA", "url": "https://earthquake.usgs.gov/earthquakes/eventpage/ci1",
+        "alert": "yellow", "tsunami": 1, "felt": 120, "status": "reviewed"
+      },
+      "geometry": { "type": "Point", "coordinates": [-117.6, 35.7, 8.2] }
+    },
+    {
+      "type": "Feature",
+      "id": "us2",
+      "properties": {
+        "mag": 5.1, "place": "Tokyo, Japan", "time": 1700000200000, "updated": null,
+        "title": null, "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us2",
+        "alert": null, "tsunami": 0, "felt": null, "status": "automatic"
+      },
+      "geometry": { "type": "Point", "coordinates": [139.7, 35.7, 30.0] }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+   Backup for Android 11 and lower. Preferences (alert settings, selected period) are backed up;
+   the earthquake cache, alert bookkeeping and the last location are not: they are regenerated
+   or personal.
+   Keep file names in sync with data/local/AppDataStores.kt.
+-->
+<full-backup-content>
+    <exclude domain="file" path="datastore/earthquake_feeds.json" />
+        <exclude domain="file" path="datastore/alert_state.json" />
+        <exclude domain="file" path="datastore/last_location.json" />
+</full-backup-content>
