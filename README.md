@@ -12,6 +12,7 @@ An Android app (Kotlin, Jetpack Compose) that shows recent earthquakes and how f
 * ~30 minutes: Set up the projects with dependency decisions and skeleton and code organization practices (+ CLAUDE.md)
 * ~2.5 hours: Working with Claude to implement, debug, and create features/functionality
 * ~1.5 hour: Reviewing the code and capturing any documentation 
+* ~1 hour: When things never go according to plan
 
 ## Features
 
@@ -40,14 +41,14 @@ On an emulator, set a location in *Extended controls → Location* to see distan
 
 MVVM with unidirectional data flow: each screen is a stateless Composable that renders one `StateFlow<UiState>` and sends events back up.
 
-| Package  | Contents                                                     |
-| -------- | ------------------------------------------------------------ |
-| `ui`     | Map, List, Alerts and Detail (screens, ViewModels, UiState), navigation, theme |
+| Package  | Contents                                                                          |
+|----------|-----------------------------------------------------------------------------------|
+| `ui`     | Map, List, Alerts and Detail (screens, ViewModels, UiState), navigation, theme    |
 | `data`   | repositories, USGS remote (Retrofit + kotlinx.serialization), location, DataStore |
-| `domain` | pure Kotlin: GeoPoint (haversine), Severity, TimePeriod, AlertRules, DataError |
-| `alerts` | foreground poller, background worker, shared alert rules, notifications |
-| `core`   | logging, analytics, app foreground state, coroutine helpers  |
-| `di`     | Hilt modules                                                 |
+| `domain` | pure Kotlin: GeoPoint (haversine), Severity, TimePeriod, AlertRules, DataError    |
+| `alerts` | foreground poller, background worker, shared alert rules, notifications           |
+| `core`   | logging, analytics, app foreground state, coroutine helpers                       |
+| `di`     | Hilt modules                                                                      |
 
 **Stack:** Compose + Material 3, Navigation 3, Hilt, MapLibre (OpenFreeMap tiles), Retrofit/OkHttp, DataStore, WorkManager, Timber. Ktlint
 

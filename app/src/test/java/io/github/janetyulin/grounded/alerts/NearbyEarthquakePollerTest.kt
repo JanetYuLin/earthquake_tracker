@@ -10,6 +10,7 @@ import io.github.janetyulin.grounded.testing.FakeLocationRepository
 import io.github.janetyulin.grounded.testing.InMemoryDataStore
 import io.mockk.mockk
 import java.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -49,7 +50,7 @@ class NearbyEarthquakePollerTest {
     }
 
     private fun TestScope.advanceBy(duration: Duration) {
-        advanceTimeBy(duration.toMillis())
+        advanceTimeBy(duration.toMillis().milliseconds)
         runCurrent()
     }
 

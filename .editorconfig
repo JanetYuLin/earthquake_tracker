@@ -11,5 +11,7 @@ ktlint_code_style = android_studio
 max_line_length = 120
 # Composables are PascalCase.
 ktlint_function_naming_ignore_when_annotated_with = Composable
+# Same import order as ktlint, so Optimize Imports in Android Studio doesn't fight it.
+ij_kotlin_imports_layout = *
 # Past-tense callbacks (onAlertsToggled, onScreenViewed) are this project's convention, see CLAUDE.md.
 ktlint_compose_parameter-naming = disabled

@@ -8,19 +8,18 @@ _Last updated: 2026-11-02_
 
 - **This is a take-home submission** ("Brick Earthquakes Tracker"). On 2026-11-02 the app was realigned with the brief: device location instead of a typed address; one persisted feed shared by Map, List, details and alerts; stale-data handling; the Safety tab and the Profile extras (name, notes, contacts, address) were cut. `README.md` is the reviewer-facing summary.
 - **Nothing is committed.** The repo has only the initial commit, and everything else is untracked. Ask before committing (see `CLAUDE.md`).
-- **Build health:** 107 JVM unit tests and 21 instrumented/Compose UI tests pass; lint has 0 errors (only "newer version available" warnings).
+- **Build health:** 107 JVM unit tests and 21 instrumented/Compose UI tests pass (UI tests use the v2 `createComposeRule`); `ktlintCheck` is clean; no Kotlin compiler warnings; lint has 0 errors. The remaining lint warnings are deliberate version holds: OkHttp/MockWebServer stay on 4.12 (Retrofit 3.0 targets OkHttp 4; 5.x is a major upgrade) and `kotlinx-coroutines-test` stays on 1.10.2 to match the coroutines runtime the app resolves.
 - **Verified on the `Medium_Phone_API_37.0` emulator:** Map centered on the device with a "you are here" marker; List with distances and Recent/Nearest/Strongest; airplane mode plus a process kill still shows the cached feed with a "Couldn't refresh · Updated …" banner; details open offline; with location revoked the map shows the world, distances and Nearest disappear, and an Allow banner shows.
 - **ktlint** (`org.jlleitschuh.gradle.ktlint` + `io.nlopez.compose.rules`) was added on 2026-11-02 and the codebase reformatted; `ktlintCheck` is clean. Style is `android_studio` with `max_line_length = 120` (the code was already written to 120) and `compose:parameter-naming` off because past-tense callbacks like `onAlertsToggled` are the project convention. Config is in `.editorconfig`.
-- **`compileDebugAndroidTestKotlin` fails to resolve dependencies:** `androidx.compose.ui:ui-test-junit4` has no version because `app/build.gradle.kts` has no `androidTestImplementation(platform(libs.androidx.compose.bom))`. Not fixed yet; instrumented tests can't build until it is.
 - **applicationId is now `io.github.janetyulin.grounded`** (was `…Grounded`). The emulator may still have the old package installed; it's a separate app and can be uninstalled.
 
 ### What the app does
-| Tab | Behavior | Data |
-|---|---|---|
-| Map | Selected period's M2.5+ worldwide quakes on MapLibre, user marker, refresh, stale banner; tap → bottom sheet (with distance) → details | `EarthquakeRepository.feed(period)` |
-| List | Same quakes; sort Recent/Nearest/Strongest; pull-to-refresh; tsunami chip | same |
-| Alerts | Enable toggle (notification permission), min magnitude, radius, disclaimer, attribution | `UserPreferences` (DataStore) |
-| Detail | Pushed on the current tab; distance from you, local time, "If you felt it" safety section | Cached feeds, then FDSN `eventid` |
+| Tab    | Behavior                                                                                                                               | Data                                |
+|--------|----------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
+| Map    | Selected period's M2.5+ worldwide quakes on MapLibre, user marker, refresh, stale banner; tap → bottom sheet (with distance) → details | `EarthquakeRepository.feed(period)` |
+| List   | Same quakes; sort Recent/Nearest/Strongest; pull-to-refresh; tsunami chip                                                              | same                                |
+| Alerts | Enable toggle (notification permission), min magnitude, radius, disclaimer, attribution                                                | `UserPreferences` (DataStore)       |
+| Detail | Pushed on the current tab; distance from you, local time, "If you felt it" safety section                                              | Cached feeds, then FDSN `eventid`   |
 
 The period (Past day / Past week) is one saved preference, so Map and List always show the same data.
 

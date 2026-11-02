@@ -19,6 +19,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 class USGSEarthquakeApiServiceTest {
 
     private val server = MockWebServer()
+    private val json = Json { ignoreUnknownKeys = true }
     private lateinit var service: USGSEarthquakeApiService
 
     @Before
@@ -26,7 +27,7 @@ class USGSEarthquakeApiServiceTest {
         server.start()
         val api = Retrofit.Builder()
             .baseUrl(server.url("/"))
-            .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory("application/json".toMediaType()))
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(UsgsApi::class.java)
         service = USGSEarthquakeApiService(api)
