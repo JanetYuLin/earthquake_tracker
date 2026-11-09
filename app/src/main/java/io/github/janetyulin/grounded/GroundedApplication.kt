@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
-import io.github.janetyulin.grounded.alerts.BackgroundAlertScheduler
-import io.github.janetyulin.grounded.alerts.ForegroundAlertTrigger
+import io.github.janetyulin.grounded.alerts.NearbyAlertChecker
 import io.github.janetyulin.grounded.alerts.NearbyEarthquakePoller
 import javax.inject.Inject
 import org.maplibre.android.MapLibre
@@ -24,10 +23,7 @@ class GroundedApplication :
     lateinit var nearbyEarthquakePoller: NearbyEarthquakePoller
 
     @Inject
-    lateinit var foregroundAlertTrigger: ForegroundAlertTrigger
-
-    @Inject
-    lateinit var backgroundAlertScheduler: BackgroundAlertScheduler
+    lateinit var nearbyAlertChecker: NearbyAlertChecker
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -43,10 +39,9 @@ class GroundedApplication :
         }
         // Must run before any MapView is created.
         MapLibre.getInstance(this)
-        // The poller and notifier only work while the app is in the foreground; the scheduler keeps a
-        // periodic background check registered while alerts are on.
-        foregroundAlertTrigger.start()
+        // The poller refreshes data only while the app is in the foreground. The checker alerts on every
+        // new feed or fix, and keeps a periodic background check scheduled while alerts are on.
+        nearbyAlertChecker.start()
         nearbyEarthquakePoller.start()
-        backgroundAlertScheduler.start()
     }
 }

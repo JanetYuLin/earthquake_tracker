@@ -89,6 +89,6 @@ MVVM with unidirectional data flow: each screen is a stateless Composable that r
 
 Repositories, ViewModels and alert logic depend on interfaces, an injected `Clock` and in-memory DataStore, so they run on the JVM with virtual time.
 
-- **107 JVM unit tests** (JUnit 4, MockK, Turbine, MockWebServer). They cover cache-first loading and error handling, the USGS parsing and error mapping, ViewModel state (distances, sorting, the stale banner), the alert rules (radius, magnitude, priming, revisions), the poller, back-stack behavior and color contrast.
+- **108 JVM unit tests** (JUnit 4, MockK, Turbine, MockWebServer). They cover cache-first loading and error handling, the USGS parsing and error mapping, ViewModel state (distances, sorting, the stale banner), the alert rules (radius, magnitude, priming, revisions), the poller, back-stack behavior and color contrast.
 - **21 Compose UI tests** render stateless screens from a fake `UiState` and check the callbacks, plus one test for the notification publisher.
 - **Manual checks:** location granted and denied, airplane mode, and relaunching offline after a process kill.

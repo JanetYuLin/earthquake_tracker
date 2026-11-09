@@ -2,6 +2,7 @@ package io.github.janetyulin.grounded.alerts
 
 import io.github.janetyulin.grounded.core.lifecycle.AppForegroundMonitor
 import io.github.janetyulin.grounded.core.logging.LoggingManager
+import io.github.janetyulin.grounded.core.work.ForegroundRepeater
 import io.github.janetyulin.grounded.data.model.UserPreferences
 import io.github.janetyulin.grounded.data.repository.UserPreferencesRepositoryImpl
 import io.github.janetyulin.grounded.domain.model.TimePeriod
@@ -37,13 +38,12 @@ class NearbyEarthquakePollerTest {
 
     private fun TestScope.startPoller() {
         val poller = NearbyEarthquakePoller(
-            foregroundMonitor,
+            ForegroundRepeater(foregroundMonitor, mockk<LoggingManager>(relaxUnitFun = true)),
             preferencesRepository,
             earthquakeRepository,
             locationRepository,
             backgroundScope,
-            interval,
-            mockk<LoggingManager>(relaxUnitFun = true)
+            interval
         )
         backgroundScope.launch { poller.run() }
         runCurrent()

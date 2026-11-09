@@ -2,13 +2,13 @@
 
 Notes to start the next session quickly. The **rules** live in `CLAUDE.md`; this file records **state, decisions, open work and lessons**. Update it at the end of each session.
 
-_Last updated: 2026-11-02_
+_Last updated: 2026-11-09_
 
 ## Current state
 
 - **This is a take-home submission** ("Brick Earthquakes Tracker"). On 2026-11-02 the app was realigned with the brief: device location instead of a typed address; one persisted feed shared by Map, List, details and alerts; stale-data handling; the Safety tab and the Profile extras (name, notes, contacts, address) were cut. `README.md` is the reviewer-facing summary.
 - **Nothing is committed.** The repo has only the initial commit, and everything else is untracked. Ask before committing (see `CLAUDE.md`).
-- **Build health:** 107 JVM unit tests and 21 instrumented/Compose UI tests pass (UI tests use the v2 `createComposeRule`); `ktlintCheck` is clean; no Kotlin compiler warnings; lint has 0 errors. The remaining lint warnings are deliberate version holds: OkHttp/MockWebServer stay on 4.12 (Retrofit 3.0 targets OkHttp 4; 5.x is a major upgrade) and `kotlinx-coroutines-test` stays on 1.10.2 to match the coroutines runtime the app resolves.
+- **Build health:** 108 JVM unit tests and 21 instrumented/Compose UI tests pass (UI tests use the v2 `createComposeRule`); `ktlintCheck` is clean; no Kotlin compiler warnings; lint has 0 errors. The remaining lint warnings are deliberate version holds: OkHttp/MockWebServer stay on 4.12 (Retrofit 3.0 targets OkHttp 4; 5.x is a major upgrade) and `kotlinx-coroutines-test` stays on 1.10.2 to match the coroutines runtime the app resolves.
 - **Verified on the `Medium_Phone_API_37.0` emulator:** Map centered on the device with a "you are here" marker; List with distances and Recent/Nearest/Strongest; airplane mode plus a process kill still shows the cached feed with a "Couldn't refresh · Updated …" banner; details open offline; with location revoked the map shows the world, distances and Nearest disappear, and an Allow banner shows.
 - **ktlint** (`org.jlleitschuh.gradle.ktlint` + `io.nlopez.compose.rules`) was added on 2026-11-02 and the codebase reformatted; `ktlintCheck` is clean. Style is `android_studio` with `max_line_length = 120` (the code was already written to 120) and `compose:parameter-naming` off because past-tense callbacks like `onAlertsToggled` are the project convention. Config is in `.editorconfig`.
 - **applicationId is now `io.github.janetyulin.grounded`** (was `…Grounded`). The emulator may still have the old package installed; it's a separate app and can be uninstalled.
@@ -26,15 +26,16 @@ The period (Past day / Past week) is one saved preference, so Map and List alway
 ## Where things are
 
 ```
-alerts/   NearbyEarthquakePoller (foreground), ForegroundAlertTrigger (foreground), NearbyAlertWorker + BackgroundAlertTrigger
-          + BackgroundAlertScheduler (background), decideAlerts + NearbyAlertCheck (shared rules), NotificationPublisher
-core/     LoggingManager(Timber), AnalyticsManager(Sample), AppForegroundMonitor, resultOf(), WhileUiSubscribed
+alerts/   NearbyEarthquakePoller (what to refresh), NearbyAlertChecker (all alert logic: start, checkInBackground)
+          + decideAlerts (rules), NotificationPublisher
+core/     LoggingManager(Timber), AnalyticsManager(Sample), AppForegroundMonitor, resultOf(), WhileUiSubscribed,
+          work (ForegroundRepeater, PeriodicWorkScheduler + keepScheduledWhile, BackgroundTask + BackgroundTaskWorker)
 data/     model (Earthquake, EarthquakeFeed/CachedFeeds/EarthquakeFeedState, UserPreferences, UserLocation),
           remote/earthquake (EarthquakeApiService, USGSEarthquakeApiService → DataError, UsgsApi, UsgsDtos, UsgsMapper),
           location (LocationProvider, AndroidLocationProvider), local (AppDataStores: files + factory, JsonSerializer),
           repository (Earthquake, UserPreferences, Location, AlertState)
 domain/   model (GeoPoint, Severity, TimePeriod, AlertLevel, AlertRules, DataError)
-di/       CoreModule, ManagerModule, NetworkModule, DataModule (repositories, DataStore singletons, location), AlertsModule, Qualifiers
+di/       CoreModule, ManagerModule, NetworkModule, DataModule (repositories, DataStore singletons, location), WorkModule, AlertsModule, Qualifiers
 ui/       navigation, map (QuakeMap = MapLibre wrapper), list, alerts, detail (+SafetySection),
           common (EarthquakeUiState/FeedContent, EarthquakeUiMappers, FeedComponents, LocationAccess, ExternalLinks), theme
 test/     testing/{Fakes (FakeEarthquakeRepository, FakeLocationRepository, keepCollecting), InMemoryDataStore, Fixtures}
@@ -52,7 +53,7 @@ The alerts pipeline (poller, triggers, shared check, publisher) is diagrammed in
 - **Typed errors**: `DataError` (Network/Server/Unknown, in `domain`) is mapped to string resources; raw exception messages never reach the UI.
 
 **Location**
-- **Coarse permission, platform `LocationManager.getCurrentLocation`** (FUSED if present, else NETWORK) with a 10 s timeout and a last-known fallback. No Play Services dependency. Kept in memory only; never persisted.
+- **Coarse permission, platform `LocationManager.getCurrentLocation`** (FUSED if present, else NETWORK) with a 10 s timeout and a last-known fallback. No Play Services dependency. The live fix is in memory; the last fix is saved to `last_location.json` (excluded from backup) for background checks and cleared when the permission is revoked.
 - **Denied/unavailable**: everything still works; distances, the user marker and the Nearest sort are hidden; a banner offers Allow, or Settings once permanently denied or when location is off. Alerts need a location and say so.
 - Checked on every resume of Map/List/Alerts (`rememberLocationAccess`) and on every poll tick.
 
@@ -61,6 +62,7 @@ The alerts pipeline (poller, triggers, shared check, publisher) is diagrammed in
 - Notifier filters the shared feed: within radius of the device, ≥ min magnitude, within `RECENT_WINDOW` (5 h), unseen.
 - **Priming key is (radius, min magnitude), not the location or period**, otherwise every slightly different fix would re-prime and nothing would ever alert. Without a location, ids are recorded (like "disabled") so the backlog doesn't replay when it arrives.
 - Below-threshold quakes aren't recorded, so a USGS upward revision still alerts. Ids are recorded before posting.
+- **Alerts restructure (2026-11-09):** generic timing moved to `core/work`: `ForegroundRepeater`, `PeriodicWorkScheduler` (+ `keepScheduledWhile`), and one `BackgroundTaskWorker` that runs a `BackgroundTask` looked up by name from a Hilt map. `alerts/` keeps only the poller (what to refresh), `NearbyAlertChecker` (the old triggers, check and background scheduling merged), `decideAlerts` and the publisher. The unique work name `nearby-alerts` is unchanged, but a device with an older build has the old worker class enqueued and `KEEP` won't replace it: toggle alerts off and on (or reinstall) once.
 - Enabling alerts while notifications are blocked keeps them enabled and shows a warning (the user can fix it in Settings), rather than silently refusing.
 
 **Navigation and UI**
@@ -83,7 +85,8 @@ The alerts pipeline (poller, triggers, shared check, publisher) is diagrammed in
    - Route platform handling (permission results, settings intents) is untested; `AndroidLocationProvider` is untested beyond manual runs.
    - A real alert notification hasn't been seen on a device.
 5. **Nice to have:** connectivity callback to refresh when the network returns; server push for timely alerts; minSdk could likely drop to 30 now that the async Geocoder is gone.
-6. **Background run on a real device is unobserved over hours** (Doze, standby buckets). On the emulator the worker runs, refreshes and reports SUCCESS, and a JobScheduler-started fresh process initializes Hilt correctly.
+6. **`BackgroundTaskWorker` hasn't run on the emulator since the 2026-11-09 restructure.** Hilt resolves the task map at compile time, but force a run (see WorkManager gotchas) to confirm.
+7. **Background run on a real device is unobserved over hours** (Doze, standby buckets). On the emulator the worker runs, refreshes and reports SUCCESS, and a JobScheduler-started fresh process initializes Hilt correctly.
 
 ## Gotchas learned the hard way
 
@@ -125,7 +128,7 @@ The alerts pipeline (poller, triggers, shared check, publisher) is diagrammed in
 ./gradlew installDebug && adb shell am start -n io.github.janetyulin.grounded/.MainActivity
 adb shell cmd connectivity airplane-mode enable       # offline check; "disable" to restore
 ~/Library/Android/sdk/emulator/emulator -avd Medium_Phone_API_37.0 -no-window -no-audio -no-snapshot-save -no-boot-anim
-adb logcat -s 'NearbyPoller:*' 'EarthquakeRepository:*' 'NearbyAlertCheck:*' 'BackgroundAlertTrigger:*' 'BackgroundAlerts:*' 'WM-WorkerWrapper:*'
+adb logcat -s 'NearbyPoller:*' 'EarthquakeRepository:*' 'NearbyAlertChecker:*' 'PeriodicWork:*' 'BackgroundTaskWorker:*' 'WM-WorkerWrapper:*'
 adb shell uiautomator dump /sdcard/ui.xml && adb shell cat /sdcard/ui.xml   # find tap coordinates
 ```
 

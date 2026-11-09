@@ -84,9 +84,11 @@ Composable <- StateFlow<UiState> <- ViewModel (map/combine) <- Flow <-
 
 See `alerts/README.md` for diagrams of how the pieces below fit together; keep it in sync when they change.
 
-- **Two paths feed alerts, sharing one set of rules** (`decideAlerts`, applied by `NearbyAlertCheck` under a lock so the paths can't double-post):
-  - **Foreground:** `NearbyEarthquakePoller` combines `AppForegroundMonitor.isForeground` (backed by `ProcessLifecycleOwner`) with the selected period and uses `collectLatest`; every 2 minutes it refreshes the location, then the feed, and `ForegroundAlertTrigger` checks each new feed or fix. Going to the background cancels the loop.
-  - **Background:** `NearbyAlertWorker` (WorkManager, unique periodic work, every 15 minutes at best, network required) runs `BackgroundAlertTrigger`: refresh the day feed and check it against `LocationRepository.lastSaved()`, the last fix seen while the app was open. `BackgroundAlertScheduler` schedules it only while alerts are on and cancels it when they're off.
+- **Two paths feed alerts, sharing one set of rules** (`decideAlerts`, applied by `NearbyAlertChecker` under a lock so the paths can't double-post):
+  - **Foreground:** `NearbyEarthquakePoller` uses `ForegroundRepeater` (backed by `AppForegroundMonitor` / `ProcessLifecycleOwner`): every 2 minutes while visible it refreshes the location, then the selected feed, and `NearbyAlertChecker` checks each new feed or fix. Going to the background cancels the loop.
+  - **Background:** `NearbyAlertChecker.start()` keeps the `nearby-alerts` `PeriodicWork` (every 15 minutes at best, network required) scheduled only while alerts are on. The generic `BackgroundTaskWorker` runs the `BackgroundTask` registered under that name in `AlertsModule`, which is `checkInBackground()`: refresh the day feed and check it against `LocationRepository.lastSaved()`, the last fix seen while the app was open.
+- **Generic timing lives in `core/work`; features only say what to run.** `ForegroundRepeater` (in-process, while visible), `PeriodicWorkScheduler` + `keepScheduledWhile` (OS-scheduled), `BackgroundTask` + `BackgroundTaskWorker` (one worker for every job). A new periodic job is a `BackgroundTask` registered with `@IntoMap @StringKey(name)` plus a `PeriodicWork(name, ...)`; never write a feature-specific `Worker`.
+- **Name classes by kind:** repeater, poller, scheduler, task, worker, checker, publisher (see `alerts/README.md`).
 - **Never assume a background process has memory.** The priming key and handled ids live in `AlertStateRepository` (DataStore), not in a field; a worker usually starts in a fresh process.
 - No background location permission and no foreground service. Timeliness is whatever WorkManager and Doze allow, which is why alerts are informational, never an early warning; the Alerts disclaimer says so.
 - Polling and work feed the repositories. Features observe the repositories; they never fetch on their own.
